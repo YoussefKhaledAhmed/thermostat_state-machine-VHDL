@@ -1,0 +1,349 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+
+entity THERMOSTAT is
+
+--                      __
+--      desired_temp ->|  |_
+--                     |    |_
+--      current_temp ->|      |
+--                     |      |-> temp_display
+--                     |     _|
+--    display_select ->|   _|
+--                     |__|
+--
+port (
+
+-->  IN signals:
+      current_temp   : in std_logic_vector(6 downto 0);
+      desired_temp   : in std_logic_vector(6 downto 0);
+      display_select : in std_logic;
+      COOL           : in std_logic;
+      HEAT           : in std_logic;
+      CLK            : in std_logic;
+      RESET          : in std_logic;
+		furnace_hot    : in std_logic;
+		AC_ready       : in std_logic;
+--> OUT signals:
+      temp_display   : out std_logic_vector(6 downto 0);
+      A_C_ON         : out std_logic;
+      FURNACE_ON     : out std_logic;
+	  FAN_ON         : out std_logic);
+
+end THERMOSTAT;
+
+
+
+architecture THERMOSTAT_arch of THERMOSTAT is
+
+  signal current_temp_reg , desired_temp_reg , temp_display_reg : std_logic_vector(6 downto 0);
+  signal display_select_reg , COOL_reg , HEAT_reg , furnace_hot_reg , AC_ready_reg : std_logic;
+  signal A_C_ON_reg , FURNACE_ON_reg , FAN_ON_reg : std_logic;
+  
+--> state machine signals:
+  type THERMOSTAT_STATE_TYPES is (IDLE, HEAT_ON, FURNACE_NOW_HOT, FURNACE_COOL
+                                 , COOL_ON, AC_NOW_READY, AC_DONE);
+  signal current_state  : THERMOSTAT_STATE_TYPES;
+  signal next_state     : THERMOSTAT_STATE_TYPES;
+  
+
+begin
+
+-------------------------------------------------
+--        1.registering the I/O signals        
+-------------------------------------------------
+--> 1. registering the Inputs: 
+  INPUTS_REG_PROC: process (CLK , RESET) is
+  begin
+    --> if RESET then resetting all the inputs
+    if RESET = '1' then
+	 
+	   --> 1. current_temp
+      current_temp_reg <= (others => '0');
+	
+   	--> 2. desired_temp
+		desired_temp_reg <= (others => '0');
+		
+		--> 3. display_select
+		display_select_reg <= '0';
+		
+		--> 4. COOL
+		COOL_reg <= '0';
+		
+		--> 5. HEAT
+		HEAT_reg <= '0';
+		
+		--> 6. furnace_hot
+		furnace_hot_reg <= '0';
+		
+		--> 7. AC_ready
+		AC_ready_reg <= '0';
+
+    elsif CLK'event and CLK = '1' then
+	   
+		--> 1. current_temp
+      current_temp_reg <= current_temp;
+		
+		--> 2. desired_temp
+		desired_temp_reg <= desired_temp;
+		
+		--> 3. display_select
+		display_select_reg <= display_select;
+		
+		--> 4. COOL
+		COOL_reg <= COOL;
+		
+		--> 5. HEAT
+		HEAT_reg <= HEAT;
+		
+		--> 6. furnace_hot
+		furnace_hot_reg <= furnace_hot;
+		
+		--> 7. AC_ready
+		AC_ready_reg <= AC_ready;
+		
+    end if;
+  end process INPUTS_REG_PROC;
+
+
+
+
+--> 2. registering the outputs: 
+  OUTPUTS_REG_PROC: process (CLK , RESET) is
+  begin
+    if RESET = '1' then
+	   
+		--> 1. temp_display
+	   temp_display <= (others => '0');
+		
+		--> 2. AC_ON
+      A_C_ON <= '0';
+		
+		--> 3. FURNACE_ON
+		FURNACE_ON <= '0';
+		
+		--> 4. FAN_ON
+		FAN_ON <= '0';
+		
+    elsif CLK'event and CLK = '1' then
+	 
+	   --> 1. temp_display
+	   temp_display <= temp_display_reg;
+		
+		--> 2. AC_ON
+      A_C_ON <= A_C_ON_reg;
+		
+		--> 3. FURNACE_ON
+		FURNACE_ON <= FURNACE_ON_reg;
+		
+		--> 4. FAN_ON
+		FAN_ON <= FAN_ON_reg;
+    end if;
+  end process OUTPUTS_REG_PROC;
+
+
+  
+----------------------------------------------------------------
+--              2.temp_display combinational logic              
+----------------------------------------------------------------
+
+  --> 1. 1st approach using if statement.
+  ----------------------------------------------------------
+  -- process to assign the desired temp to the temp_display
+  -- according to the value of display_select
+  -- 0 -> desired_temp
+  -- 1 -> current_temp
+  ----------------------------------------------------------
+  --process (current_temp_reg,desired_temp_reg,display_select_reg)
+  --begin 
+
+    --if display_select_reg = '0' then
+
+      --temp_display_reg <= desired_temp_reg;
+
+    --elsif display_select = '1' then
+
+      --temp_display_reg <= current_temp_reg;
+
+    --end if;
+
+  --end process;  
+
+
+---------------------------------------------------------------
+  --> 2. 2nd approach using AND, and OR operations:
+  process (current_temp_reg,desired_temp_reg,display_select_reg)
+    -- mask_temp: is an internal variable where it shall hold
+    --            000000 -> if display_select = '0'
+    --            111111 -> if display_select = '1'
+    variable mask_temp : std_logic_vector(6 downto 0);
+  begin
+
+    -- case statement: to check whether the display_select is:
+    -- 1. '0'
+    -- 2. '1'
+    case display_select_reg is
+      --> if display_select = '0' then assign mask_temp to 000000
+      when '0' => mask_temp := (others => '0');
+      --> if display_select = '1' then assign mask_temp to 111111
+      when '1' => mask_temp := (others => '1');
+      --> if any other value then assign it to unkown value
+      when others => mask_temp := (others => 'X');
+    end case;
+
+    --> here we have two scenarios:
+    --> a. display_select = '0': then mask_temp = '000000' when
+    -->                          NOT mask_temp --> 111111 and 
+    -->                          when: A --> desired_temp and (not mask_temp) -> desired_temp
+    -->                                B --> current_temp and mask_temp -> 000000
+    -->                          then A or B -> desired_temp.
+    --> b. display_select = '1': then mask_temp = '111111'
+    -->                          NOT mask_temp --> 000000 and 
+    -->                          when: A --> desired_temp and (not mask_temp) -> 000000
+    -->                                B --> current_temp and mask_temp -> current_temp
+    -->                          then A or B -> current_temp.
+    temp_display_reg <= ((desired_temp_reg and (not mask_temp)) or (current_temp_reg and mask_temp));
+
+  end process;
+
+
+---------------------------------------------------------------------------------------------------------
+  
+---------------------------------------------------------------------------------------------
+--                    3.state machine to control: A/C, furnace, fan                  
+--
+-- Note: Synopsys style state machine is implemented:
+--       where the assignment of the next state is done in a seperate process
+---------------------------------------------------------------------------------------------
+--> updating the current state every CLK.
+  UPDATE_CURRENT_STATE: process (CLK , RESET)
+  begin
+    if RESET = '1' then
+	   current_state <= IDLE;
+	 elsif rising_edge (CLK) then
+	   current_state <= next_state;
+	 end if;
+  end process UPDATE_CURRENT_STATE;
+
+--> next state combinatory logic.
+  STATE_MACHINE: process (current_state , current_temp_reg , desired_temp_reg , display_select_reg , COOL_reg , HEAT_reg , furnace_hot_reg , AC_ready_reg)
+  begin
+
+    case current_state is
+      --> 1. state 1: IDLE
+      when IDLE => 
+        if HEAT_reg = '1' and current_temp_reg < desired_temp_reg then
+		    next_state <= HEAT_ON;
+
+		  elsif COOL_reg = '1' and current_temp_reg > desired_temp_reg then
+		    next_state <= COOL_ON;
+
+		  else 
+		    next_state <= IDLE;
+		  end if;
+		
+      --> 2. state 2: HEAT_ON
+      when HEAT_ON => 
+	if furnace_hot_reg = '1' then
+	  next_state <= FURNACE_NOW_HOT;
+
+	else
+	  next_state <= HEAT_ON;
+	end if;
+		  
+      --> 3. state 3: FURNACE_NOW_HOT
+      when FURNACE_NOW_HOT =>
+	if not(HEAT_reg = '1' and current_temp_reg < desired_temp_reg) then
+	  next_state <= FURNACE_COOL;
+
+	else
+	  next_state <= FURNACE_NOW_HOT;
+	end if;
+		
+      --> 4. state 4: FURNACE_COOL
+      when FURNACE_COOL =>
+	if furnace_hot_reg = '0' then
+	  next_state <= IDLE;
+
+	else
+	  next_state <= FURNACE_COOL;
+	end if;
+		
+      --> 5. state 5: COOL_ON
+      when COOL_ON => 
+	if AC_ready_reg = '1' then
+	  next_state <= AC_NOW_READY;
+
+	else
+	  next_state <= COOL_ON;
+	end if;
+		
+      --> 6. state 6: AC_NOW_READY
+      when AC_NOW_READY =>
+	if not(COOL_reg = '1' and current_temp_reg > desired_temp_reg) then
+	  next_state <= AC_DONE;
+
+	else
+	  next_state <= AC_NOW_READY;
+	end if;
+		
+      --> 7. state 7: AC_DONE
+      when AC_DONE =>
+	if AC_ready_reg = '0' then
+	  next_state <= IDLE;
+
+	else
+          next_state <= AC_DONE;
+	end if;
+		  
+      --> default case for fault handling
+      when others =>
+	next_state <= IDLE;
+		  
+    end case;
+  end process STATE_MACHINE;
+
+--> 3. updating the output signals of the state machine.
+  STATE_MACHINE_OUTPUTS: process(CLK , RESET)
+  begin
+  
+    if RESET = '1' then
+	   FURNACE_ON_reg <= '0';
+		A_C_ON_reg <= '0';
+		FAN_ON_reg <= '0';
+    
+	 elsif CLK'event and CLK = '1' then
+	  --> 1. FURNACE_ON:
+	  if ((next_state = HEAT_ON) or (next_state = FURNACE_NOW_HOT)) then
+		 FURNACE_ON_reg <= '1';
+	  
+	  else
+		 FURNACE_ON_reg <= '0';
+	  
+	  end if;
+	  
+	  --> 2. AC_ON:
+	  if ((next_state = COOL_ON) or (next_state = AC_NOW_READY)) then
+		 A_C_ON_reg <= '1';
+	  
+	  else
+		 A_C_ON_reg <= '0';
+	  
+	  end if;
+	  
+	  --> 3. FAN_ON_reg:
+	  if ((next_state = FURNACE_NOW_HOT) or (next_state = AC_NOW_READY)
+			or (next_state = FURNACE_COOL) or (next_state = AC_DONE)) then
+		 FAN_ON_reg <= '1';
+	  
+	  else
+		 FAN_ON_reg <= '0';
+	  
+	  end if;
+	  
+	end if;
+  
+  end process STATE_MACHINE_OUTPUTS;
+
+end THERMOSTAT_arch;
