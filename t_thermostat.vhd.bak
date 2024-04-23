@@ -55,7 +55,7 @@ UUT : THERMOSTAT port map ( CLK => CLK,
 
 
 CLK <= not CLK after 5ns;
-RESET <= '1' , '0' after 10ns;
+RESET <= '1' & '0' after 10ns;
 
 
 
@@ -145,7 +145,7 @@ begin
   current_temp <= "0000111";
 
   --> 3. wait for 10 ns
-  wait 10 ns;
+  wait for 10 ns;
 
   --> 4. assign the current_temp with value less than the desired_temp -> FURNACE = ON
   desired_temp <= "0000111";
