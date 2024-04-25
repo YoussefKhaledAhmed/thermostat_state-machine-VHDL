@@ -10,86 +10,136 @@ z2
 cModel Technology
 Z0 dD:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL
 Et_tempmux
-Z1 w1713911171
-Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
-Z3 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
-!i122 33
+Z1 w1714076934
+Z2 DPx4 work 5 utils 0 22 1Ebm`LMSbJ?UVn4iVgYOF1
+Z3 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
+Z4 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z5 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
+Z6 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z7 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+!i122 65
 R0
-Z4 8D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/t_thermostat.vhd
-Z5 FD:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/t_thermostat.vhd
+Z8 8D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/t_thermostat.vhd
+Z9 FD:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/t_thermostat.vhd
 l0
-L5 1
-VH?hm=a0Pobg3K0@nMX;2k1
-!s100 3G8@4QK>_9`45N_@Gl0hR0
-Z6 OV;C;2020.1;71
+L8 1
+Va`Vc8[E^J<0hYeUA=1DcX2
+!s100 [:Ho7XmnUCbU^9ehlm2@W1
+Z10 OV;C;2020.1;71
 32
-Z7 !s110 1713911202
+Z11 !s110 1714076942
 !i10b 1
-Z8 !s108 1713911201.000000
-Z9 !s90 -reportprogress|300|-work|work|D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/t_thermostat.vhd|
-Z10 !s107 D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/t_thermostat.vhd|
+Z12 !s108 1714076941.000000
+Z13 !s90 -reportprogress|300|-work|work|D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/t_thermostat.vhd|
+Z14 !s107 D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/t_thermostat.vhd|
 !i113 1
-Z11 o-work work
-Z12 tExplicit 1 CvgOpt 0
+Z15 o-work work
+Z16 tExplicit 1 CvgOpt 0
 Atest
 R2
 R3
-DEx4 work 9 t_tempmux 0 22 H?hm=a0Pobg3K0@nMX;2k1
-!i122 33
-l40
-L10 169
-V?4FWf]oYF3da@HUdL_a=i3
-!s100 ^4:e?j]L]GLi7Te<:e1o82
+R4
+R5
 R6
-32
 R7
-!i10b 1
-R8
-R9
+Z17 DEx4 work 9 t_tempmux 0 22 a`Vc8[E^J<0hYeUA=1DcX2
+!i122 65
+l43
+Z18 L13 215
+V?@IlH2^X<]3:_XnX]nj0:3
+!s100 M7I?lo_bTz:E8l_m3jgL]0
 R10
-!i113 1
+32
 R11
+!i10b 1
 R12
+R13
+R14
+!i113 1
+R15
+R16
 Ethermostat
-Z13 w1713912912
-Z14 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
-R2
+Z19 w1713912912
 R3
+R6
+R7
 !i122 43
 R0
-Z15 8D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/thermostat.vhd
-Z16 FD:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/thermostat.vhd
+Z20 8D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/thermostat.vhd
+Z21 FD:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/thermostat.vhd
 l0
 L6 1
 VjQ4cWX`cH4;`a=od^bobn0
 !s100 QiH>b[IaM^5TRFlFmkdF>3
-R6
+R10
 32
-Z17 !s110 1713912918
+Z22 !s110 1713912918
 !i10b 1
-Z18 !s108 1713912917.000000
-Z19 !s90 -reportprogress|300|-work|work|D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/thermostat.vhd|
-Z20 !s107 D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/thermostat.vhd|
+Z23 !s108 1713912917.000000
+Z24 !s90 -reportprogress|300|-work|work|D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/thermostat.vhd|
+Z25 !s107 D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/thermostat.vhd|
 !i113 1
-R11
-R12
+R15
+R16
 Athermostat_arch
-R14
-R2
 R3
-Z21 DEx4 work 10 thermostat 0 22 jQ4cWX`cH4;`a=od^bobn0
+R6
+R7
+DEx4 work 10 thermostat 0 22 jQ4cWX`cH4;`a=od^bobn0
 !i122 43
 l56
-Z22 L39 335
+L39 335
 V3Xg;1?:AM>MWMV``<iULe1
 !s100 hzz2z31Yni;i^1@8kD^7G0
-R6
+R10
 32
-R17
+R22
 !i10b 1
-R18
-R19
-R20
+R23
+R24
+R25
 !i113 1
-R11
-R12
+R15
+R16
+Putils
+R6
+R7
+!i122 63
+Z26 w1714076759
+R0
+Z27 8D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/work/utils.vhd
+Z28 FD:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/work/utils.vhd
+l0
+L6 1
+V1Ebm`LMSbJ?UVn4iVgYOF1
+!s100 0UI@BO]PZ5BXaO?Q_LgUo2
+R10
+32
+b1
+Z29 !s110 1714076769
+!i10b 1
+Z30 !s108 1714076769.000000
+Z31 !s90 -reportprogress|300|-work|work|D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/work/utils.vhd|
+Z32 !s107 D:/FPGA/my projects/GitHub/thermostat_state-machine-VHDL/work/utils.vhd|
+!i113 1
+R15
+R16
+Bbody
+R2
+R6
+R7
+!i122 63
+l0
+L17 1
+VM6inFG7SH^z[J^<U@<fHT1
+!s100 Z:2hUHHInCQ3[ai@6KbX>3
+R10
+32
+R29
+!i10b 1
+R30
+R31
+R32
+!i113 1
+R15
+R16

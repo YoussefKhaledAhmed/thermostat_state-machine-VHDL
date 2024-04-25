@@ -1,5 +1,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
+use work.utils.all;
 
 
 entity T_TEMPMUX is
@@ -66,6 +69,17 @@ RESET <= '1' , '0' after 10ns;
 --> c. testing the FURNACE.
 
 TEST_PROC : process
+
+  --> procedure to set the current and desired temp where it takes 
+  --> integers and it converts them to logic vectors.
+  procedure SET_TEMP (current , desired : in integer) is
+  begin
+  
+  current_temp <= std_logic_vector(to_unsigned(current , current_temp'length));
+  desired_temp <= std_logic_vector(to_unsigned(desired , desired_temp'length));
+
+  end;
+
 begin 
 
 --> a. resetting all the input signals first:
@@ -79,8 +93,11 @@ begin
 --> b. testing the temp_display:
 
   --> 1. assign the current_temp and the desired_temp with different values
-  current_temp <= "1010101";
-  desired_temp <= "0101010";
+  -->    a. using the SET_TEMP procedure
+  SET_TEMP(current => 85 , desired => 42);
+  -->    b. manually
+  --current_temp <= "1010101";
+  --desired_temp <= "0101010";
 
   --> 2. assign display_select with '0'
   display_select <= '0';
@@ -88,11 +105,21 @@ begin
   --> 3. wait for 10 ns
   wait for 15 ns;
 
+----> self checking the temp_display if it isn't equal to desired_temp then this report will
+----> be displayed.
+  assert temp_display = desired_temp report "temp display value isn't correct it should be" & CONV_VECTOR_TO_DSTRING(desired_temp) 
+    severity error;
+
   --> 4. assign display_select with '1'
   display_select <= '1';
 
   --> 5. wait for 10 ns
   wait for 15 ns;
+
+----> self checking the temp_display if it isn't equal to current_temp then this report will
+----> be displayed.
+  assert temp_display = current_temp report "temp display value isn't correct it should be" & CONV_VECTOR_TO_DSTRING(current_temp) 
+    severity error;
 
 -----------------------------------------------------------------------------------
 
@@ -102,15 +129,27 @@ begin
   COOL <= '1';
   
   --> 2. assign the desired_temp with value greater than the current_temp -> A/C = OFF
-  desired_temp <= "0000111";
-  current_temp <= "0000001";
+  -->    a. using the SET_TEMP procedure
+  SET_TEMP(current => 1 , desired => 3);
+  -->    b. manually
+  --desired_temp <= "0000111";
+  --current_temp <= "0000001";  
+
   
   --> 3. wait 10 ns
   wait for 10 ns;
+
+------> self checking the A_C_ON if it isn't equal to '0' then this report will
+------> be displayed.
+  assert A_C_ON = '0' report "the A_C should be OFF not ON" 
+    severity error;
   
   --> 4. assign the current_temp with value greater than the desired_temp -> A/C = ON
-  desired_temp <= "0000001";
-  current_temp <= "0000111";
+  -->    a. using the SET_TEMP procedure
+  SET_TEMP(current => 3 , desired => 1);
+  -->    b. manually
+  --desired_temp <= "0000001";
+  --current_temp <= "0000111";
   
   --> 5. wait until the AC is ON
   wait until A_C_ON = '1';
@@ -133,7 +172,6 @@ begin
   --> 11. wait until the FAN is OFF
   wait until FAN_ON = '0';
 
-
 -----------------------------------------------------------------------------------
 --> d. testing the FURNACE and the FAN:
 
@@ -141,15 +179,26 @@ begin
   HEAT <= '1';
 
   --> 2. assign the desired_temp with value less than the current_temp -> FURNACE = OFF
-  desired_temp <= "0000001";
-  current_temp <= "0000111";
+  -->    a. using the SET_TEMP procedure
+  SET_TEMP(current => 3 , desired => 1);
+  -->    b. manually
+  --desired_temp <= "0000001";
+  --current_temp <= "0000111";
 
   --> 3. wait for 10 ns
   wait for 10 ns;
 
+------> self checking the FURNACE_ON if it isn't equal to '0' then this report will
+------> be displayed.
+  assert FURNACE_ON = '0' report "the FURNACE should be OFF not ON" 
+    severity error;
+
   --> 4. assign the current_temp with value less than the desired_temp -> FURNACE = ON
-  desired_temp <= "0000111";
-  current_temp <= "0000001";
+  -->    a. using the SET_TEMP procedure
+  SET_TEMP(current => 1 , desired => 3);
+  -->    b. manually
+  --desired_temp <= "0000111";
+  --current_temp <= "0000001";
 
   --> 5. wait until the furnace is ON
   wait until FURNACE_ON = '1';
